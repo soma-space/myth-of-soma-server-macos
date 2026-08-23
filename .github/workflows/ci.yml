@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check shell syntax
+        run: bash -n scripts/*.sh
+      - name: Verify pinned server distribution
+        run: make fetch
+      - name: Confirm repaired payload is present
+        run: |
+          test -f .runtime/distribution/server/oneperone/OnePerOne.exe
+          test -f .runtime/distribution/server/oneperone/ServerExtention.dll
+          test -f .runtime/distribution/server/oneperone/gsodbc.dll
+          test -f .runtime/distribution/database/soma.bak
