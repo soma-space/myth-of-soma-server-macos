@@ -8,4 +8,9 @@ cleanup() {
 trap cleanup EXIT
 
 "$ROOT/scripts/start-game-server.sh"
-printf "PASS: repaired OnePerOne loaded Rauban's extension and connected to SQL Server.\n"
+for port in 4100 4110 4120 12000; do
+  nc -z 127.0.0.1 "$port"
+done
+grep -q '^SQLPrepare statement=' \
+  "$ROOT/.runtime/distribution/server/oneperone/odbc-shim.log"
+printf 'PASS: guarded core, ODBC shim, and all client-facing services are ready.\n'

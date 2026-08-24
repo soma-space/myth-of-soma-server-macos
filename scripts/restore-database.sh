@@ -18,6 +18,7 @@ set -a
 source "$ENV_FILE"
 set +a
 : "${MSSQL_SA_PASSWORD:?MSSQL_SA_PASSWORD is required}"
+advertised_ip=${SOMA_ADVERTISED_IP:-127.0.0.1}
 
 cd "$ROOT"
 sqlcmd=(/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -b)
@@ -38,7 +39,9 @@ done
   exit 1
 }
 
-docker-compose exec -T mssql "${sqlcmd[@]}" -i /dev/stdin < "$ROOT/sql/restore.sql"
+docker-compose exec -T mssql "${sqlcmd[@]}" \
+  -v "SOMA_ADVERTISED_IP=$advertised_ip" \
+  -i /dev/stdin < "$ROOT/sql/restore.sql"
 docker-compose exec -T mssql /opt/mssql-tools18/bin/sqlcmd -C -S localhost \
   -U soma -P soma -b -d soma \
   -Q 'SELECT DB_NAME() AS database_name, (SELECT COUNT(*) FROM sys.tables) AS table_count;'

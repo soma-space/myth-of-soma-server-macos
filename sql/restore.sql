@@ -36,6 +36,10 @@ IF IS_ROLEMEMBER(N'db_owner', N'soma') <> 1
     ALTER ROLE [db_owner] ADD MEMBER [soma];
 GO
 
+UPDATE [dbo].[SERVERINFO]
+   SET [strIPAddr] = N'$(SOMA_ADVERTISED_IP)';
+GO
+
 SELECT DB_NAME() AS database_name,
        (SELECT COUNT(*) FROM sys.tables) AS table_count;
 GO

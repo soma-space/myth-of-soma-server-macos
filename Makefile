@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: doctor fetch vm-start db-up db-restore db-status db-down crossover prepare services start stop status smoke
+.PHONY: doctor fetch vm-start db-up db-restore db-status db-down crossover prepare services start stop status smoke account client-fetch client-setup client
 
 doctor:
 	./scripts/doctor.sh
@@ -44,3 +44,15 @@ status:
 
 smoke:
 	./scripts/smoke-test.sh
+
+account:
+	./scripts/create-account.sh "$(SOMA_ACCOUNT_USER)" "$(SOMA_ACCOUNT_PASSWORD)" "$(SOMA_ACCOUNT_EMAIL)"
+
+client-fetch:
+	./scripts/fetch-client.sh
+
+client-setup:
+	./scripts/setup-client.sh
+
+client:
+	./scripts/launch-client.sh

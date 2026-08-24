@@ -87,6 +87,8 @@ for hive in HKCU HKLM; do
     /d No /f >/dev/null 2>&1
   "${wine[@]}" reg.exe add "$base\\soma" /v TrustServerCertificate /t REG_SZ \
     /d Yes /f >/dev/null 2>&1
+  "${wine[@]}" reg.exe add "$base\\soma" /v Trusted_Connection /t REG_SZ \
+    /d No /f >/dev/null 2>&1
 done
 
 probe="$BUILD/win32-odbc-probe.exe"

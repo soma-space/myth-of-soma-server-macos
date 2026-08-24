@@ -21,7 +21,7 @@ if [[ -x /Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine ]
 else
   warn 'CrossOver was not found in /Applications'
 fi
-for command_name in colima docker docker-compose i686-w64-mingw32-gcc; do
+for command_name in colima docker docker-compose i686-w64-mingw32-gcc 7zz unshield; do
   if command -v "$command_name" >/dev/null 2>&1; then
     ok "$command_name is installed"
   else
@@ -33,7 +33,7 @@ if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
 else
   warn 'Docker engine is not running'
 fi
-if [[ -f "$ROOT/.runtime/distribution/server/oneperone/ServerExtention.dll" ]]; then
+if [[ -f "$ROOT/.runtime/distribution/server/oneperone/OnePerOne.wine.exe" ]]; then
   ok 'Checksum-verified server payload is present'
 else
   warn 'Server payload is absent; run make fetch'

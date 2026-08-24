@@ -2,15 +2,18 @@
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-VERSION=${SOMA_WINDOWS_VERSION:-v0.1.0-rc1}
-EXPECTED_SHA256=${SOMA_WINDOWS_ZIP_SHA256:-4db30557ea1cb9d36e23d3be80f8584a57a9128cf7b419785320b55160689abc}
+VERSION=${SOMA_WINDOWS_VERSION:-v0.2.0-rc1}
+EXPECTED_SHA256=${SOMA_WINDOWS_ZIP_SHA256:-3e5c53f1586d7ff8d3079020632c8d8ebb8d9209ae8e904e17881d30b39a94e1}
 ASSET="myth-of-soma-server-windows-$VERSION.zip"
 URL="https://github.com/soma-space/myth-of-soma-server-windows/releases/download/$VERSION/$ASSET"
 CACHE="$ROOT/.cache/$ASSET"
 STAGE="$ROOT/.runtime/extract-$VERSION"
 DESTINATION="$ROOT/.runtime/distribution"
+PREVIOUS="$ROOT/.runtime/distribution.previous"
+VERSION_FILE="$DESTINATION/.soma-release-version"
 
-if [[ -d "$DESTINATION" && -f "$DESTINATION/SHA256SUMS" ]]; then
+if [[ -f "$VERSION_FILE" && "$(<"$VERSION_FILE")" == "$VERSION" &&
+   -f "$DESTINATION/SHA256SUMS" ]]; then
   printf 'Server payload already present at %s\n' "$DESTINATION"
   exit 0
 fi
@@ -34,7 +37,15 @@ source_root="$STAGE/myth-of-soma-server-windows-$VERSION"
   shasum -a 256 -c SHA256SUMS >/dev/null
 )
 echo 'All files in the release manifest are valid.'
+if [[ -d "$PREVIOUS" ]]; then
+  find "$PREVIOUS" -mindepth 1 -delete
+  rmdir "$PREVIOUS"
+fi
+if [[ -d "$DESTINATION" ]]; then
+  mv "$DESTINATION" "$PREVIOUS"
+fi
 mv "$source_root" "$DESTINATION"
+printf '%s\n' "$VERSION" > "$VERSION_FILE"
 find "$STAGE" -mindepth 1 -delete
 
 printf 'Installed checksum-verified server payload at %s\n' "$DESTINATION"

@@ -16,9 +16,10 @@ jobs:
         run: bash -n scripts/*.sh
       - name: Verify pinned server distribution
         run: make fetch
-      - name: Confirm repaired payload is present
+      - name: Confirm guarded payload variants are present
         run: |
           test -f .runtime/distribution/server/oneperone/OnePerOne.exe
+          test -f .runtime/distribution/server/oneperone/OnePerOne.wine.exe
           test -f .runtime/distribution/server/oneperone/ServerExtention.dll
           test -f .runtime/distribution/server/oneperone/gsodbc.dll
           test -f .runtime/distribution/database/soma.bak
